@@ -1,6 +1,7 @@
 #ifndef CHANLIB_EXPORT_H
 #define CHANLIB_EXPORT_H
 //----------------------------------------------------------------------------------------------------------------------
+#include "channellib_logger.h"
 #include "tcpserver.h"
 #include "tcpclient.h"
 #include "udpclient.h"

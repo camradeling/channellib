@@ -5,7 +5,7 @@
 #include <memory>
 #include <iostream>
 #include <fstream>
-#include "logger.h"
+#include "channellib_logger.h"
 //----------------------------------------------------------------------------------------------------------------------
 #include "MessageQueue.h"
 #include "MessageBuffer.h"
@@ -29,11 +29,11 @@ class MessageBuffer;
 class ChanPool
 {
 public:
-	ChanPool(){}
+	ChanPool(ChannelLib::Logger* lgr=nullptr):logger(lgr){}
 	virtual ~ChanPool(){}
 public:
 	weak_ptr<ChanPool> chp;//ссылка на себя, чтоб передавать дальше
-    Logger* logger=nullptr;
+    ChannelLib::Logger* logger=nullptr;
     bool ExtraLog=0;
     uint32_t DebugValue = 0;
     string configVersion = "";

@@ -16,6 +16,7 @@ set(Sources
         tcpserver.cpp
         uart.cpp
         MessageBuffer.cpp
+        channellib_logger.cpp
         )
 
 add_library(${PROJECT_NAME} SHARED ${Sources}  ${version_file})

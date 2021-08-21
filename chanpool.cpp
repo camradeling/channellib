@@ -1,4 +1,3 @@
-#include "reedservice_version.h"
 #include "basicchannel.h"
 #include "uart.h"
 #include "tcpbase.h"
@@ -8,11 +7,13 @@
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init(mxml_node_t* channode)
 {
+    shared_ptr<ChanPool> schanpool = chp.lock();
+    if(!schanpool)
+        return -1;
 	mxml_node_t* xmlNode, *blockNode;
 	if(channode == nullptr)
 	{
-        if(logger)
-            logger->write(DebugValue,"No config provided");
+        WRITELOG("No config provided");
 		return 1;
 	}
     char* tmpbuff = (char*)mxmlElementGetAttr(channode, "Version");
@@ -23,8 +24,7 @@ int ChanPool::init(mxml_node_t* channode)
         blockNode = mxmlFindElement(channode, channode, "CliChannels", NULL, NULL, MXML_DESCEND);
         if(blockNode == nullptr)
         {
-            if(logger)
-                logger->write(DebugValue,"No <CliChannels> node provided");
+            WRITELOG("No <CliChannels> node provided");
             return -1;
         }
         mxml_node_t* extranode = mxmlFindElement(blockNode, blockNode, "ExtraLog", NULL, NULL, MXML_DESCEND);
@@ -42,19 +42,17 @@ int ChanPool::init(mxml_node_t* channode)
     }
     else
     {
-        if(logger)
-            logger->write(DebugValue,"config version mismatch, upgrade to config version 2.0");
+        WRITELOG("config version mismatch, upgrade to config version 2.0");
     }
-    if(logger)
-        logger->write(DebugValue,"Channel lib inited (%s)", gGIT_VERSION.c_str());
+    WRITELOG("Channel lib inited");
     inited=1;
 	return 0;
 }
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_com_ports(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schp = chp.lock();
-    if(!schp)
+    shared_ptr<ChanPool> schanpool = chp.lock();
+    if(!schanpool)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -85,15 +83,14 @@ int ChanPool::init_com_ports(mxml_node_t* channode)
             hflow = (char *) mxmlGetText(seeknode, NULL);
         uint16_t val;
         val = atoi(tmpport);
-        COMPort* com = new COMPort(schp);
+        COMPort* com = new COMPort(schanpool);
         com->alias = string(tmpbuff);
         com->funcName = string(func);
         if(tmpport != NULL)
             com->clientfd = open(tmpport, O_RDWR | O_NOCTTY  | O_EXCL | O_NDELAY);
         if(com->clientfd <= 0)
         {
-            if(logger)
-                logger->write(DebugValue,"Error open %s", com->alias.c_str());
+            WRITELOG("Error open %s", com->alias.c_str());
             continue;
         }
         if(tmpbits != NULL)
@@ -121,15 +118,14 @@ int ChanPool::init_com_ports(mxml_node_t* channode)
         com->init();
         allChan.push_back(std::move(shared_ptr<BasicChannel>(com)));
     }
-    if(logger)
-        logger->write(DebugValue,"com inited");
+    WRITELOG("com inited");
     return 0;
 }
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_tcp(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schp = chp.lock();
-    if(!schp)
+    shared_ptr<ChanPool> schanpool = chp.lock();
+    if(!schanpool)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -150,7 +146,7 @@ int ChanPool::init_tcp(mxml_node_t* channode)
         if(tmpbuff == NULL || port == NULL || func == NULL)
             continue;
         val = atoi(port);
-        TcpServerSocket* tsock = new TcpServerSocket(schp);
+        TcpServerSocket* tsock = new TcpServerSocket(schanpool);
         tsock->alias = string(tmpbuff);
         tsock->listaddr.sin_family = AF_INET;
         tsock->listaddr.sin_port = htons(val);
@@ -158,15 +154,14 @@ int ChanPool::init_tcp(mxml_node_t* channode)
         tsock->init();
         allChan.push_back(std::move(shared_ptr<BasicChannel>(tsock)));
     }
-    if(logger)
-        logger->write(DebugValue, "tcp inited");
+    WRITELOG("tcp inited");
     return 0;
 }
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_proto_tcp(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schp = chp.lock();
-    if(!schp)
+    shared_ptr<ChanPool> schanpool = chp.lock();
+    if(!schanpool)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -190,7 +185,7 @@ int ChanPool::init_proto_tcp(mxml_node_t* channode)
         if(tmpbuff == NULL || port == NULL || func == NULL)
             continue;
         val = atoi(port);
-        ProtoServerSocket* tsock = new ProtoServerSocket(schp);
+        ProtoServerSocket* tsock = new ProtoServerSocket(schanpool);
         tsock->alias = string(tmpbuff);
         tsock->listaddr.sin_family = AF_INET;
         tsock->listaddr.sin_port = htons(val);
@@ -200,15 +195,14 @@ int ChanPool::init_proto_tcp(mxml_node_t* channode)
         tsock->init();
         allChan.push_back(std::move(shared_ptr<BasicChannel>(tsock)));
     }
-    if(logger)
-        logger->write(DebugValue, "proto tcp inited");
+    WRITELOG("proto tcp inited");
     return 0;
 }
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_proto_tcp_clients(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schp = chp.lock();
-    if(!schp)
+    shared_ptr<ChanPool> schanpool = chp.lock();
+    if(!schanpool)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -236,7 +230,7 @@ int ChanPool::init_proto_tcp_clients(mxml_node_t* channode)
             defKA = (char *) mxmlGetText(seeknode, NULL);
         if(tmpbuff == nullptr || tmpport == nullptr || addr == nullptr)
             continue;
-        ProtoClientSocket* tsock = new ProtoClientSocket(schp);
+        ProtoClientSocket* tsock = new ProtoClientSocket(schanpool);
         val = atoi(tmpport);
         tsock->alias = string(tmpbuff);
         tsock->funcName = string(func);
@@ -249,15 +243,14 @@ int ChanPool::init_proto_tcp_clients(mxml_node_t* channode)
         tsock->init();
         allChan.push_back(std::move(shared_ptr<BasicChannel>(tsock)));
     }
-    if(logger)
-        logger->write(DebugValue, "proto tcp clients inited");
+    WRITELOG("proto tcp clients inited");
     return 0;
 }
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_tcp_clients(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schp = chp.lock();
-    if(!schp)
+    shared_ptr<ChanPool> schanpool = chp.lock();
+    if(!schanpool)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -280,7 +273,7 @@ int ChanPool::init_tcp_clients(mxml_node_t* channode)
             tmpport = (char *) mxmlGetText(seeknode, NULL);
         if(tmpbuff == nullptr || tmpport == nullptr || addr == nullptr)
             continue;
-        TcpClientSocket* tsock = new TcpClientSocket(schp);
+        TcpClientSocket* tsock = new TcpClientSocket(schanpool);
         uint16_t val;
         val = atoi(tmpport);
         tsock->alias = string(tmpbuff);
@@ -292,15 +285,14 @@ int ChanPool::init_tcp_clients(mxml_node_t* channode)
         tsock->init();
         allChan.push_back(std::move(shared_ptr<BasicChannel>(tsock)));
     }
-    if(logger)
-        logger->write(DebugValue, "tcp clients inited");
+    WRITELOG("tcp clients inited");
     return 0;
 }
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_udp_clients(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schp = chp.lock();
-    if(!schp)
+    shared_ptr<ChanPool> schanpool = chp.lock();
+    if(!schanpool)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -326,7 +318,7 @@ int ChanPool::init_udp_clients(mxml_node_t* channode)
             bindp = (char *) mxmlGetText(seeknode, NULL);
         if(tmpbuff == nullptr || tmpport == nullptr || addr == nullptr)
             continue;
-        UdpClientSocket* tsock = new UdpClientSocket(schp);
+        UdpClientSocket* tsock = new UdpClientSocket(schanpool);
         uint16_t val;
         val = atoi(tmpport);
         tsock->alias = string(tmpbuff);
@@ -343,8 +335,7 @@ int ChanPool::init_udp_clients(mxml_node_t* channode)
         tsock->init();
         allChan.push_back(std::move(shared_ptr<BasicChannel>(tsock)));
     }
-    if(logger)
-        logger->write(DebugValue, "udp clients inited");
+    WRITELOG("udp clients inited");
     return 0;
 }
 //----------------------------------------------------------------------------------------------------------------------
