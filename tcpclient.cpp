@@ -7,8 +7,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void TcpClientSocket::thread_run()
 {
-	shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+	shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return;
 	sigset_t signal_mask;
 	sigfillset(&signal_mask);

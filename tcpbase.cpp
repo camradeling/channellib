@@ -6,8 +6,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void TcpBase::enable_keepalive(int sock)
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return;
     int yes = 1;
     if(setsockopt(sock, SOL_SOCKET, SO_KEEPALIVE, &yes, sizeof(int)) < 0)

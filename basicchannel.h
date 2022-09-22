@@ -6,19 +6,19 @@
 #include "MessageBuffer.h"
 #include "MessageQueue.h"
 //----------------------------------------------------------------------------------------------------------------------
-#define WRITELOG(format,...) {if(schanpool->logger) schanpool->logger->write(schanpool->DebugValue,format,##__VA_ARGS__);}
-#define WRITELOGEXTRA(format,...) {if(schanpool->logger && schanpool->ExtraLog) schanpool->logger->write(schanpool->DebugValue,format,##__VA_ARGS__);}
+#define WRITELOG(format,...) {if(schp->logger) schp->logger->write(schp->DebugValue,format,##__VA_ARGS__);}
+#define WRITELOGEXTRA(format,...) {if(schp->logger && schp->ExtraLog) schp->logger->write(schp->DebugValue,format,##__VA_ARGS__);}
 //----------------------------------------------------------------------------------------------------------------------
 class ChanPool;
 //----------------------------------------------------------------------------------------------------------------------
 class BasicChannel
 {
 public:
-    BasicChannel(shared_ptr<ChanPool> chp)
-            : chanpool(chp), inQueue(false), outQueue(false), inCmdQueue(false), outCmdQueue(false) {}
+    BasicChannel(shared_ptr<ChanPool> nchp)
+            : chp(nchp), inQueue(false), outQueue(false), inCmdQueue(false), outCmdQueue(false) {}
     virtual ~BasicChannel();
 public:
-    weak_ptr<ChanPool>			chanpool;
+    weak_ptr<ChanPool>			chp;
     string              chanType="Undefined";
     MessageQueue<std::unique_ptr<MessageBuffer>> inQueue;
     MessageQueue<std::unique_ptr<MessageBuffer>> outQueue;

@@ -18,9 +18,9 @@ set(Sources
         MessageBuffer.cpp
         channellib_logger.cpp
         )
-
 add_library(${PROJECT_NAME} SHARED ${Sources}  ${version_file})
 target_link_libraries(${PROJECT_NAME} mxml )
 if(BUILD_TESTS)
 add_executable(udptest udptest.cpp)
+add_executable(uarttest uarttest.cpp MessageBuffer.cpp)
 endif()

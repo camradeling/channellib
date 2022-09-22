@@ -14,18 +14,30 @@
 //----------------------------------------------------------------------------------------------------------------------
 void COMPort::thread_run()
 {
+    shared_ptr<ChanPool> schp = chp.lock();
     busy = 1;
     while(!exit)
+    {
+        WRITELOG("Opening %s", alias.c_str());
+        clientfd = open(dev.c_str(), O_RDWR | O_NOCTTY  | O_EXCL | O_NDELAY);
+        if(clientfd <= 0)
+        {
+            WRITELOG("Error open %s", alias.c_str());
+            sleep(1);
+            continue;
+        }
+        tcgetattr(clientfd, &Config);
+        config_com();
+        Config.c_cc[VMIN] = 0;
+        Config.c_cc[VTIME] = 0;
+        tcsetattr(clientfd, TCSANOW, &Config);
         do_message_loop();
+        sleep(1);
+    }
 }
 //----------------------------------------------------------------------------------------------------------------------
 int COMPort::init()
 {
-    tcgetattr(clientfd, &Config);
-    config_com();
-    Config.c_cc[VMIN] = 0;
-    Config.c_cc[VTIME] = 0;
-    tcsetattr(clientfd, TCSANOW, &Config);
     return BasicChannel::init();
 }
 //----------------------------------------------------------------------------------------------------------------------
@@ -60,8 +72,7 @@ int COMPort::recv_packet(std::unique_ptr<MessageBuffer> *packet, enum io_state s
     int bytesRecvdLast = 0;
     string total="";
     do
-    {
-        bytesRecvdLast = read (clientfd, buffer, 1024);
+    {   bytesRecvdLast = read(clientfd, buffer, 1024);
         if(bytesRecvdLast < 0)
         {
             if (errno == EAGAIN)
@@ -73,15 +84,18 @@ int COMPort::recv_packet(std::unique_ptr<MessageBuffer> *packet, enum io_state s
         total += string(buffer,bytesRecvdLast);
     }
     while(bytesRecvdLast);
-    *packet = std::unique_ptr<MessageBuffer>(new MessageBuffer(clientfd, total.length(), CHAN_DATA_PACKET));
-    memcpy(packet->get()->Data(), total.data(),total.length());
+    if(total.size())
+    {
+        *packet = std::unique_ptr<MessageBuffer>(new MessageBuffer(clientfd, total.length(), CHAN_DATA_PACKET));
+        memcpy(packet->get()->Data(), total.data(),total.length());
+    }
     return 0;
 }
 //----------------------------------------------------------------------------------------------------------------------
 int COMPort::com_write_chunk(int fd, char *buf, int nbytes)
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     fd_set rdset,wrset,exset; FD_ZERO(&rdset);FD_ZERO(&wrset);FD_ZERO(&exset);
     FD_SET(fd,&wrset);
@@ -109,8 +123,8 @@ int COMPort::com_write_chunk(int fd, char *buf, int nbytes)
 //----------------------------------------------------------------------------------------------------------------------
 void COMPort::config_com()
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return;
     Config.c_cflag = 0;
     Config.c_iflag = 0;

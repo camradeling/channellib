@@ -11,10 +11,10 @@
 //----------------------------------------------------------------------------------------------------------------------
 shared_ptr<TcpPeerSocket> ProtoServerSocket::new_peer()
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return nullptr;
-    return std::move(shared_ptr<ProtoPeerSocket>(new ProtoPeerSocket(schanpool)));
+    return std::move(shared_ptr<ProtoPeerSocket>(new ProtoPeerSocket(schp)));
 }
 //----------------------------------------------------------------------------------------------------------------------
 int ProtoPeerSocket::recv_packet(std::unique_ptr<MessageBuffer> *packet, enum io_state state)
@@ -76,8 +76,8 @@ int ProtoPeerSocket::recv_packet(std::unique_ptr<MessageBuffer> *packet, enum io
 //----------------------------------------------------------------------------------------------------------------------
 int ProtoPeerSocket::send_packet(MessageBuffer *packet, enum io_state state, bool zipped)
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     uint32_t  len = packet->Length();
     uint32_t bytesToSend = len + sizeof(uint32_t);

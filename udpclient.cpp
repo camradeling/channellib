@@ -7,8 +7,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void UdpClientSocket::thread_run()
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return;
     sigset_t signal_mask;
     sigfillset(&signal_mask);
@@ -60,8 +60,8 @@ int UdpClientSocket::clear_and_close()
 //----------------------------------------------------------------------------------------------------------------------
 int UdpClientSocket::send_packet(MessageBuffer *packet, enum io_state state, bool zipped)
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     static uint32_t bytesSent;
     uint32_t  packLen = packet->Length();

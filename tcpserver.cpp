@@ -4,8 +4,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 void TcpServerSocket::thread_run()
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return;
     sigset_t signal_mask;
 	sigfillset(&signal_mask);
@@ -65,10 +65,10 @@ int TcpServerSocket::clear_and_close()
 //----------------------------------------------------------------------------------------------------------------------
 shared_ptr<TcpPeerSocket> TcpServerSocket::new_peer()
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return nullptr;
-    return std::move(shared_ptr<TcpPeerSocket>(new TcpPeerSocket(schanpool)));
+    return std::move(shared_ptr<TcpPeerSocket>(new TcpPeerSocket(schp)));
 }
 //----------------------------------------------------------------------------------------------------------------------
 string sockaddr_to_string(struct sockaddr_in sa)
@@ -80,8 +80,8 @@ string sockaddr_to_string(struct sockaddr_in sa)
 //----------------------------------------------------------------------------------------------------------------------
 void TcpServerSocket::do_message_loop()
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return;
     add_wait(outQueue, EPOLLIN);
     add_wait(outCmdQueue, EPOLLIN);

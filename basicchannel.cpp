@@ -7,8 +7,8 @@
 //----------------------------------------------------------------------------------------------------------------------
 int BasicChannel::init()
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     epollFD = epoll_create1(EPOLL_CLOEXEC);
     if (epollFD < 0)
@@ -22,8 +22,8 @@ int BasicChannel::init()
 //----------------------------------------------------------------------------------------------------------------------
 int BasicChannel::start_thread()
 {
-    shared_ptr<ChanPool> schanpool = chanpool.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     int32_t  ret;
     pthread_attr_t      threadAttr;
@@ -150,8 +150,8 @@ void BasicChannel::do_message_loop()
     io_state rcvState = IO_START;
     while (busy)
     {
-        shared_ptr<ChanPool> schanpool = chanpool.lock();
-        if(!schanpool)
+        shared_ptr<ChanPool> schp = chp.lock();
+        if(!schp)
             return;
         struct epoll_event ev;
         int res = 0;
@@ -241,6 +241,7 @@ void BasicChannel::do_message_loop()
         {
             if (ev.events & EPOLLIN)
             {
+                //WRITELOG("%s[%d]: socket EPOLLIN event", alias.c_str(),clientfd);
                 //пришли данные из сокета
                 int res = recv_packet(&recvPacket, rcvState);
                 if (res < 0)

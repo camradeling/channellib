@@ -39,6 +39,7 @@ public:
     UARTConfig_t			tcfg;
     struct termios  		Config;
     uint32_t      			SymTO;
+    string                  dev;
 };
 //----------------------------------------------------------------------------------------------------------------------
 #endif // UART_H_INCLUDED

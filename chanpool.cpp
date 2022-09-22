@@ -7,9 +7,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schanpool = chp.lock();
-    if(!schanpool)
-        return -1;
+    shared_ptr<ChanPool> schp = chp.lock();
 	mxml_node_t* xmlNode, *blockNode;
 	if(channode == nullptr)
 	{
@@ -51,8 +49,8 @@ int ChanPool::init(mxml_node_t* channode)
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_com_ports(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schanpool = chp.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -83,16 +81,20 @@ int ChanPool::init_com_ports(mxml_node_t* channode)
             hflow = (char *) mxmlGetText(seeknode, NULL);
         uint16_t val;
         val = atoi(tmpport);
-        COMPort* com = new COMPort(schanpool);
+        COMPort* com = new COMPort(schp);
         com->alias = string(tmpbuff);
         com->funcName = string(func);
         if(tmpport != NULL)
-            com->clientfd = open(tmpport, O_RDWR | O_NOCTTY  | O_EXCL | O_NDELAY);
-        if(com->clientfd <= 0)
         {
-            WRITELOG("Error open %s", com->alias.c_str());
-            continue;
+            com->dev=string(tmpport);
+            //com->clientfd = open(tmpport, O_RDWR | O_NOCTTY  | O_EXCL | O_NDELAY);
         }
+        /*if(com->clientfd <= 0)
+        {
+            if(logger)
+                logger->write(DebugValue,"Error open %s", com->alias.c_str());
+            continue;
+        }*/
         if(tmpbits != NULL)
             com->tcfg.WORDLEN = atoi(tmpbits);
         if(tmpparity != NULL)
@@ -124,8 +126,8 @@ int ChanPool::init_com_ports(mxml_node_t* channode)
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_tcp(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schanpool = chp.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -146,7 +148,7 @@ int ChanPool::init_tcp(mxml_node_t* channode)
         if(tmpbuff == NULL || port == NULL || func == NULL)
             continue;
         val = atoi(port);
-        TcpServerSocket* tsock = new TcpServerSocket(schanpool);
+        TcpServerSocket* tsock = new TcpServerSocket(schp);
         tsock->alias = string(tmpbuff);
         tsock->listaddr.sin_family = AF_INET;
         tsock->listaddr.sin_port = htons(val);
@@ -160,8 +162,8 @@ int ChanPool::init_tcp(mxml_node_t* channode)
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_proto_tcp(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schanpool = chp.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -185,7 +187,7 @@ int ChanPool::init_proto_tcp(mxml_node_t* channode)
         if(tmpbuff == NULL || port == NULL || func == NULL)
             continue;
         val = atoi(port);
-        ProtoServerSocket* tsock = new ProtoServerSocket(schanpool);
+        ProtoServerSocket* tsock = new ProtoServerSocket(schp);
         tsock->alias = string(tmpbuff);
         tsock->listaddr.sin_family = AF_INET;
         tsock->listaddr.sin_port = htons(val);
@@ -201,8 +203,8 @@ int ChanPool::init_proto_tcp(mxml_node_t* channode)
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_proto_tcp_clients(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schanpool = chp.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -230,7 +232,7 @@ int ChanPool::init_proto_tcp_clients(mxml_node_t* channode)
             defKA = (char *) mxmlGetText(seeknode, NULL);
         if(tmpbuff == nullptr || tmpport == nullptr || addr == nullptr)
             continue;
-        ProtoClientSocket* tsock = new ProtoClientSocket(schanpool);
+        ProtoClientSocket* tsock = new ProtoClientSocket(schp);
         val = atoi(tmpport);
         tsock->alias = string(tmpbuff);
         tsock->funcName = string(func);
@@ -249,8 +251,8 @@ int ChanPool::init_proto_tcp_clients(mxml_node_t* channode)
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_tcp_clients(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schanpool = chp.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -273,7 +275,7 @@ int ChanPool::init_tcp_clients(mxml_node_t* channode)
             tmpport = (char *) mxmlGetText(seeknode, NULL);
         if(tmpbuff == nullptr || tmpport == nullptr || addr == nullptr)
             continue;
-        TcpClientSocket* tsock = new TcpClientSocket(schanpool);
+        TcpClientSocket* tsock = new TcpClientSocket(schp);
         uint16_t val;
         val = atoi(tmpport);
         tsock->alias = string(tmpbuff);
@@ -291,8 +293,8 @@ int ChanPool::init_tcp_clients(mxml_node_t* channode)
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_udp_clients(mxml_node_t* channode)
 {
-    shared_ptr<ChanPool> schanpool = chp.lock();
-    if(!schanpool)
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
         return -1;
     mxml_node_t* curnode;
     mxml_node_t* seeknode;
@@ -318,7 +320,7 @@ int ChanPool::init_udp_clients(mxml_node_t* channode)
             bindp = (char *) mxmlGetText(seeknode, NULL);
         if(tmpbuff == nullptr || tmpport == nullptr || addr == nullptr)
             continue;
-        UdpClientSocket* tsock = new UdpClientSocket(schanpool);
+        UdpClientSocket* tsock = new UdpClientSocket(schp);
         uint16_t val;
         val = atoi(tmpport);
         tsock->alias = string(tmpbuff);
