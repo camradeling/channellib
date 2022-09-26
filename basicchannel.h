@@ -39,7 +39,8 @@ public:
     uint32_t            seqnum=0;
 public:
     virtual int init();
-    virtual void send_message_buffer(MessageQueue<std::unique_ptr<MessageBuffer>>* queue, std::unique_ptr<MessageBuffer> buf, bool forceStart = false) {queue->push(std::move(buf), forceStart);}
+    virtual void send_message_buffer(MessageQueue<std::unique_ptr<MessageBuffer>>* queue, \
+        std::unique_ptr<MessageBuffer> buf, bool forceStart = false) {queue->push(std::move(buf), forceStart);}
     virtual int clear_and_close(){return 0;}
     enum io_state
     {
