@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.6)
 project(ChannelLib)
-
 set(CMAKE_CXX_STANDARD 11)
-
 set(PROJECT_NAME ChannelLib)
+set(BIN_DIR ${CMAKE_BINARY_DIR}/Binaries)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BIN_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BIN_DIR})
 
 set(Sources
         protoclient.cpp
@@ -20,6 +22,7 @@ set(Sources
         mxmlconf.cpp
         )
 add_library(${PROJECT_NAME} SHARED ${Sources}  ${version_file})
+add_library(${PROJECT_NAME}_static STATIC ${Sources} ${version_file})
 target_link_libraries(${PROJECT_NAME} mxml )
 if(BUILD_TESTS)
 add_executable(udptest udptest.cpp)
