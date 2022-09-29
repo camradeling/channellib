@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <signal.h>
+#include <cstring>
 //----------------------------------------------------------------------------------------------------------------------
 #include "uart.h"
 #include "chanpool.h"

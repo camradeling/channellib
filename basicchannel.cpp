@@ -1,6 +1,7 @@
 #include <pthread.h>
 #include <mutex>
 #include <sys/epoll.h>
+#include <cstring>
 #include <sys/socket.h>
 #include "basicchannel.h"
 #include "chanpool.h"

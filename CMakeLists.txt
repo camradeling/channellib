@@ -17,6 +17,7 @@ set(Sources
         uart.cpp
         MessageBuffer.cpp
         channellib_logger.cpp
+        mxmlconf.cpp
         )
 add_library(${PROJECT_NAME} SHARED ${Sources}  ${version_file})
 target_link_libraries(${PROJECT_NAME} mxml )

@@ -9,8 +9,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 #include "MessageQueue.h"
 #include "MessageBuffer.h"
-//----------------------------------------------------------------------------------------------------------------------
-#include "mxml.h"
+#include "config.h"
 //----------------------------------------------------------------------------------------------------------------------
 using namespace std;
 //----------------------------------------------------------------------------------------------------------------------
@@ -41,14 +40,14 @@ public:
 public:
 	vector<shared_ptr<BasicChannel>> allChan;
 public:
-	int init(mxml_node_t* channode);
-    int init_priorities(mxml_node_t* channode);
-	int init_tcp(mxml_node_t* channode);
-	int init_tcp_clients(mxml_node_t* channode);
-	int init_proto_tcp(mxml_node_t* channode);
-	int init_proto_tcp_clients(mxml_node_t* channode);
-	int init_com_ports(mxml_node_t* channode);
-	int init_udp_clients(mxml_node_t* channode);
+	int init(ChanPoolConfig* config);
+    //int init_priorities(mxml_node_t* channode);
+	int init_tcp(vector<TCPServerInitStruct> tcps);
+	int init_tcp_clients(vector<TCPClientInitStruct> tcpc);
+	int init_proto_tcp(vector<ProtoServerInitStruct> protos);
+	int init_proto_tcp_clients(vector<ProtoClientInitStruct> protoc);
+	int init_com_ports(vector<COMInitStruct> coms);
+	int init_udp_clients(vector<UDPClientInitStruct> udpc);
 };
 //----------------------------------------------------------------------------------------------------------------------
 #endif/*CHANPOOL_H*/

@@ -1,3 +1,4 @@
+#include <cstring>
 #include "tcpbase.h"
 #include "tcpserver.h"
 #include "chanpool.h"

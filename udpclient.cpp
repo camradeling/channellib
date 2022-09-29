@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <fcntl.h>
+#include <cstring>
 //----------------------------------------------------------------------------------------------------------------------
 #include "tcpbase.h"
 #include "udpclient.h"
