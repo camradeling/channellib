@@ -191,7 +191,7 @@ vector<TCPClientInitStruct> mxml_parse_tcp_clients(mxml_node_t* channode)
          curnode = mxmlFindElement(curnode, channode, NULL, NULL, NULL, MXML_NO_DESCEND))
     {
         tmpbuff = (char*)mxmlElementGetAttr(curnode, "Type");
-        if (tmpbuff == NULL || strcmp(tmpbuff, "ProtoTCPClient"))
+        if (tmpbuff == NULL || strcmp(tmpbuff, "TCPClient"))
             continue;//for now we process only tcp channels
         tmpbuff = (char*)mxmlElementGetAttr(curnode, "Alias");
         char* func = (char*)mxmlElementGetAttr(curnode, "Function");
