@@ -4,7 +4,7 @@
 #include <sys/epoll.h>
 //----------------------------------------------------------------------------------------------------------------------
 #include "MessageBuffer.h"
-#include "MessageQueue.h"
+#include "messagequeue/MessageQueue.h"
 //----------------------------------------------------------------------------------------------------------------------
 #define WRITELOG(format,...) {if(schp->logger) schp->logger->write(schp->DebugValue,format,##__VA_ARGS__);}
 #define WRITELOGEXTRA(format,...) {if(schp->logger && schp->ExtraLog) schp->logger->write(schp->DebugValue,format,##__VA_ARGS__);}

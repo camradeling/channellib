@@ -9,7 +9,7 @@
 #include "protoserver.h"
 #include "tcpbase.h"
 #include "MessageBuffer.h"
-#include "MessageQueue.h"
+#include "messagequeue/MessageQueue.h"
 #include "uart.h"
 #include "config.h"
 #include "chanpool.h"

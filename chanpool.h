@@ -7,7 +7,7 @@
 #include <fstream>
 #include "channellib_logger.h"
 //----------------------------------------------------------------------------------------------------------------------
-#include "MessageQueue.h"
+#include "messagequeue/MessageQueue.h"
 #include "MessageBuffer.h"
 #include "config.h"
 //----------------------------------------------------------------------------------------------------------------------
