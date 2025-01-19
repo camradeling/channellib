@@ -261,7 +261,7 @@ ChanPoolConfig* mxml_parse_config(mxml_node_t* channode)
 	mxml_node_t* xmlNode, *blockNode;
 	if(channode == nullptr)
 		return nullptr;
-    blockNode = mxmlFindElement(channode, channode, "CliChannels", NULL, NULL, MXML_DESCEND);
+    blockNode = mxmlFindElement(channode, channode, "Channels", NULL, NULL, MXML_DESCEND);
     if(blockNode == nullptr)
         return nullptr;
     ChanPoolConfig* config = new ChanPoolConfig;

@@ -19,7 +19,6 @@ class MessageBuffer
     enum MessageType msgType;
     std::vector<char> data;
     uint32_t fd=-1;
-    std::string chanaddr="";
 public:
     uint32_t seqnum=0;
     MessageBuffer(uint32_t cfd, size_t length, enum MessageType type, string chaddr="");
@@ -30,7 +29,6 @@ public:
     uint32_t Length() {return data.size();}
     uint32_t getfd(){return fd;}
     void setfd(uint32_t newfd){fd=newfd;}
-    std::string getChanAddr(){return chanaddr;}
 };
 //----------------------------------------------------------------------------------------------------------------------
 #endif //MESSAGEBUFFER_H
