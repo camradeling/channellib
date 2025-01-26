@@ -21,7 +21,8 @@ class MessageBuffer
     uint32_t fd=-1;
 public:
     uint32_t seqnum=0;
-    MessageBuffer(uint32_t cfd, size_t length, enum MessageType type, string chaddr="");
+    MessageBuffer(uint32_t cfd, size_t length, enum MessageType type);
+    MessageBuffer(uint32_t cfd, std::vector<uint8_t> input, enum MessageType type);
     MessageBuffer(MessageBuffer* src);
     enum MessageType Type() {return msgType;}
     void SetType(enum MessageType type) {msgType = type;}

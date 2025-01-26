@@ -153,7 +153,7 @@ void TcpServerSocket::do_message_loop()
                 }
                 enable_keepalive(peer->clientfd);
                 WRITELOG("%s[%d]: tcp connection established from %s:%d",alias.c_str(),peer->clientfd,peer->peeraddr.c_str(),ntohs(peer->peer_addr.sin_port));
-                inCmdQueue.push(std::unique_ptr<MessageBuffer>(new MessageBuffer(peer->clientfd, 0, CHAN_OPEN_PACKET,peer->peeraddr)), true);
+                inCmdQueue.push(std::unique_ptr<MessageBuffer>(new MessageBuffer(peer->clientfd, 0, CHAN_OPEN_PACKET)), true);
                 peer->rcvState = IO_START;
                 add_wait(peer->clientfd,EPOLLIN);
                 peers.insert(make_pair<int,shared_ptr<TcpPeerSocket>>((int)peer->clientfd,std::move(peer)));
