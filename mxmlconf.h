@@ -22,6 +22,8 @@ vector<TCPClientInitStruct> mxml_parse_tcp_clients(mxml_node_t* channode);
 //----------------------------------------------------------------------------------------------------------------------
 vector<UDPClientInitStruct> mxml_parse_udp_clients(mxml_node_t* channode);
 //----------------------------------------------------------------------------------------------------------------------
+vector<VirtualInitStruct> mxml_parse_virtual(mxml_node_t* channode);
+//----------------------------------------------------------------------------------------------------------------------
 ChanPoolConfig* mxml_parse_config(mxml_node_t* channode);
 //----------------------------------------------------------------------------------------------------------------------
 #endif/*MXMLCONF_H*/

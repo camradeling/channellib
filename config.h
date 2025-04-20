@@ -72,6 +72,12 @@ typedef struct UDPClientInitStruct_t
 	uint16_t bindport=0;
 }UDPClientInitStruct;
 //----------------------------------------------------------------------------------------------------------------------
+typedef struct VirtualInitStruct_t
+{
+	string alias="";
+	string function="";
+}VirtualInitStruct;
+//----------------------------------------------------------------------------------------------------------------------
 class ChanPoolConfig
 {
 public:
@@ -83,6 +89,7 @@ public:
 	vector<TCPClientInitStruct> allTCPClients;
 	vector<ProtoClientInitStruct> allProtoClients;
 	vector<UDPClientInitStruct> allUDPClients;
+	vector<VirtualInitStruct> allVirtual;
 };
 //----------------------------------------------------------------------------------------------------------------------
 #endif/*CONFIG_H*/

@@ -256,6 +256,30 @@ vector<UDPClientInitStruct> mxml_parse_udp_clients(mxml_node_t* channode)
     return udpvec;
 }
 //----------------------------------------------------------------------------------------------------------------------
+vector<VirtualInitStruct> mxml_parse_virtual(mxml_node_t* channode)
+{
+    mxml_node_t* curnode;
+    mxml_node_t* seeknode;
+    char* tmpbuff;
+    uint16_t val;
+    vector<VirtualInitStruct> vcvec;
+    for (curnode = mxmlFindElement(channode, channode, "Channel", NULL, NULL, MXML_DESCEND);
+         curnode != NULL;
+         curnode = mxmlFindElement(curnode, channode, NULL, NULL, NULL, MXML_NO_DESCEND))
+    {
+        tmpbuff = (char*)mxmlElementGetAttr(curnode, "Type");
+        if (tmpbuff == NULL || strcmp(tmpbuff, "virtual"))
+            continue;
+        tmpbuff = (char*)mxmlElementGetAttr(curnode, "Alias");
+        char* func = (char*)mxmlElementGetAttr(curnode, "Function");
+        VirtualInitStruct vc;
+        vc.alias=string(tmpbuff);
+        vc.function = string(func);
+        vcvec.push_back(vc);
+    }
+    return vcvec;
+}
+//----------------------------------------------------------------------------------------------------------------------
 ChanPoolConfig* mxml_parse_config(mxml_node_t* channode)
 {
 	mxml_node_t* xmlNode, *blockNode;
@@ -271,6 +295,7 @@ ChanPoolConfig* mxml_parse_config(mxml_node_t* channode)
     config->allProtoServers = mxml_parse_proto_tcp(blockNode);
     config->allProtoClients = mxml_parse_proto_tcp_clients(blockNode);
     config->allCOMPorts = mxml_parse_com_ports(blockNode);
+    config->allVirtual = mxml_parse_virtual(blockNode);
     return config;
 }
 //----------------------------------------------------------------------------------------------------------------------
