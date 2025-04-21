@@ -12,7 +12,6 @@ int VirtualChannel::send_packet(MessageBuffer *packet, enum io_state state, bool
     shared_ptr<ChanPool> schp = chp.lock();
     if(!schp)
         return -1;
-    WRITELOG("Virtual channel send_packet");
     if (callback)
         callback(packet);
     return 0;
