@@ -10,6 +10,7 @@ set(Sources
         protoclient.cpp
         protoserver.cpp
         basicchannel.cpp
+        virtualchannel.cpp
         chanpool.cpp
         tcpbase.cpp
         tcpclient.cpp

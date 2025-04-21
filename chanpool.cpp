@@ -1,9 +1,9 @@
 #include "basicchannel.h"
 #include "uart.h"
-#include "tcpbase.h"
 #include "protoclient.h"
 #include "protoserver.h"
 #include "udpclient.h"
+#include "virtualchannel.h"
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init(ChanPoolConfig* config)
 {
@@ -14,9 +14,28 @@ int ChanPool::init(ChanPoolConfig* config)
     init_proto_tcp(config->allProtoServers);
     init_proto_tcp_clients(config->allProtoClients);
     init_com_ports(config->allCOMPorts);
+    init_virtual_channels(config->allVirtual);
     WRITELOG("Channel lib inited");
     inited=1;
 	return 0;
+}
+//----------------------------------------------------------------------------------------------------------------------
+int ChanPool::init_virtual_channels(vector<VirtualInitStruct> vcs)
+{
+    shared_ptr<ChanPool> schp = chp.lock();
+    if(!schp)
+        return -1;
+    for(int i = 0; i < vcs.size(); i++)
+    {
+        VirtualInitStruct* pis = &vcs[i];
+        VirtualChannel* com = new VirtualChannel(schp);
+        com->alias = pis->alias;
+        com->funcName = pis->function;
+        com->init();
+        allChan.push_back(std::move(shared_ptr<BasicChannel>(com)));
+    }
+    WRITELOG("virtual inited");
+    return 0;
 }
 //----------------------------------------------------------------------------------------------------------------------
 int ChanPool::init_com_ports(vector<COMInitStruct> coms)
@@ -146,5 +165,14 @@ int ChanPool::init_udp_clients(vector<UDPClientInitStruct> udpc)
     }
     WRITELOG("udp clients inited");
     return 0;
+}
+//----------------------------------------------------------------------------------------------------------------------
+shared_ptr<BasicChannel> ChanPool::channel_by_alias(string alias)
+{
+    for (int i = 0; i < allChan.size(); i++) {
+        if (allChan[i]->alias == alias)
+            return allChan[i];
+    }
+    return nullptr;
 }
 //----------------------------------------------------------------------------------------------------------------------

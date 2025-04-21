@@ -48,6 +48,8 @@ public:
 	int init_proto_tcp_clients(vector<ProtoClientInitStruct> protoc);
 	int init_com_ports(vector<COMInitStruct> coms);
 	int init_udp_clients(vector<UDPClientInitStruct> udpc);
+	int init_virtual_channels(vector<VirtualInitStruct> vcs);
+	shared_ptr<BasicChannel> channel_by_alias(string alias);
 };
 //----------------------------------------------------------------------------------------------------------------------
 #endif/*CHANPOOL_H*/

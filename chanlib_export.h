@@ -8,6 +8,7 @@
 #include "protoclient.h"
 #include "protoserver.h"
 #include "tcpbase.h"
+#include "virtualchannel.h"
 #include "MessageBuffer.h"
 #include "messagequeue/MessageQueue.h"
 #include "uart.h"
